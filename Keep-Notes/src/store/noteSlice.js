@@ -9,8 +9,8 @@ const LoadNotes = () => {
     }
 }
 
-const SaveNotes = (note) => {
-    localStorage.setItem('notes',JSON.stringify(note))
+const SaveNotes = (state) => {
+    localStorage.setItem('notes',JSON.stringify(state))
 }
 
 
