@@ -1,46 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const LoadDataFromLocalStorage = JSON.parse(localStorage.getItem('habits')) || [];
+const savedHabits = JSON.parse(localStorage.getItem("habits")) || [];
 
-const SaveDataToLocalStorage = (state) => {
-    localStorage.setItem('habits',JSON.stringify(state));
-}
-
-const initialState = {
-    habits: LoadDataFromLocalStorage
-}
-
-export const habitSlice = createSlice({
-    name: "habit",
-    initialState,
-    reducers: {
-        addHabit: (state,action) => {
-            state.push(
-                {
-                    id: Date.now(),
-                    title: action.payload,
-                    completedays: []
-                }
-            )
-            SaveDataToLocalStorage(state)
-        },
-
-        toggleHabits : (state,action) => {
-            const {id,date} = action.payload
-            const habit = state.habits((h) => h.id === id);
-            if(habit){
-                if(habit.completedays.includes(date)){
-                    habit.completedays = habit.completedays.filter(d => d !== date)
-                }else{
-                    habit.completedays.push(date)
-                }
-            }
-            SaveDataToLocalStorage(state)
-        },
-
-        deleteHbaits: (state,action) => {
-            const filtered =  state.filter((h) => h.id !== action.payload)
-            SaveDataToLocalStorage(filtered)
+const habitSlice = createSlice({
+  name: 'habit',
+  initialState: {
+    habits: savedHabits, // { id, title, completedDays: [dates] }
+  },
+  reducers: {
+    addHabit: (state, action) => {
+      state.habits.push({
+        id: Date.now(),
+        title: action.payload,
+        completedDays: [],
+      });
+      localStorage.setItem("habits", JSON.stringify(state.habits));
+    },
+    toggleHabitDay: (state, action) => {
+      const { id, date } = action.payload;
+      const habit = state.habits.find(h => h.id === id);
+      if (habit) {
+        if (habit.completedDays.includes(date)) {
+          habit.completedDays = habit.completedDays.filter(d => d !== date);
+        } else {
+          habit.completedDays.push(date);
         }
+      }
+      localStorage.setItem("habits", JSON.stringify(state.habits));
+    },
+    deleteHabit: (state, action) => {
+      state.habits = state.habits.filter(h => h.id !== action.payload);
+      localStorage.setItem("habits", JSON.stringify(state.habits));
     }
-})
+  }
+});
+
+export const { addHabit, toggleHabitDay, deleteHabit } = habitSlice.actions;
+export default habitSlice.reducer;
