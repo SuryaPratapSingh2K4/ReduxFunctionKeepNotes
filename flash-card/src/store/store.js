@@ -6,3 +6,5 @@ export const store = configureStore({
         flashcard: flashcardReducer
     },
 })
+
+export default store;
