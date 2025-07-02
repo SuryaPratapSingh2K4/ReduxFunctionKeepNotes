@@ -19,7 +19,7 @@ export const postSlice = createSlice({
     name:'post',
     initialState,
     reducers: {
-        addPost: (state,action) => {
+        UploadPost: (state,action) => {
             const newPost = {
                 id: Date.now(),
                 title: action.payload.title,
@@ -48,4 +48,4 @@ export const postSlice = createSlice({
 })
 
 export default postSlice.reducer;
-export const {addPost,deletePost,updatePost} = postSlice.actions;
+export const {UploadPost,deletePost,updatePost} = postSlice.actions;
