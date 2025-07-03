@@ -61,6 +61,7 @@ export default function EditPost() {
                 type="text"
                 className="border p-2 rounded w-full"
                 value={title}
+                placeholder='Title'
                 onChange={(e) => setTitle(e.target.value)}
                 required
             />
@@ -68,12 +69,15 @@ export default function EditPost() {
                 type="text"
                 className="border p-2 rounded w-full"
                 value={author}
+                placeholder='Author'
                 onChange={(e) => setAuthor(e.target.value)}
                 required
             />
             <textarea
                 className="border p-2 rounded w-full"
+                rows="10"
                 value={content}
+                placeholder='Content'
                 onChange={(e) => setContent(e.target.value)}
                 required
             ></textarea>
