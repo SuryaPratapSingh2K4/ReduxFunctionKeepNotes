@@ -1,81 +1,92 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch,useSelector } from 'react-redux'
-import {useParams} from 'react-dom'
-import e from 'express'
-import { updatePost } from '../store/postSlice'
-import {useNavigate} from 'react-dom'
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { editPost } from '../store/postsSlice';
+import imageCompression from 'browser-image-compression';
 
-function EditPost() {
-    const [title,setTitle] = useState("")
-    const [author,setAuthor] = useState("")
-    const [content,setContent] = useState("")
-    const [image,setImage] = useState("")
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const {id} = useParams();
-    const post = useSelector(state => state.post.posts.find(p => p.id === Number(id)))
+export default function EditPost() {
+    const { id } = useParams();
+    const post = useSelector((state) => state.post.posts.find(p => p.id === Number(id)));
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleSubmit = () => {
-        e.preventdefault(),
-        dispatch(updatePost({
-            id: post.id,
-            title,
-            author,
-            image,
-            content
-        }))
-        navigate('/posts')
+    const [title, setTitle] = useState(post?.title || '');
+    const [author, setAuthor] = useState(post?.author || '');
+    const [content, setContent] = useState(post?.content || '');
+    const [image, setImage] = useState(post?.image || '');
+
+    // const handleImageUpload = (e) => {
+    //     const file = e.target.files[0];
+    //     const reader = new FileReader();
+
+    //     reader.onloadend = () => {
+    //         setImage(reader.result);
+    //     };
+
+    //     if (file) {
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
+
+    const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+    setImage(base64);
+  } catch (err) {
+    console.error('Image compression error:', err);
+  }
+};
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(editPost({ id: post.id, title, content, image, author }));
+        navigate('/posts');
     };
 
-    useEffect(() => {
-        if(post){
-            setTitle(post.title)
-            setAuthor(post.author)
-            setContent(post.content)
-            setImage(post.image || "")
-        }
-    },[post])
-
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader;
-        reader.onloadend = () => setImage(reader.result)
-        if(file){
-            return reader.readAsDataURL(file)
-        }
-    }
+    if (!post) return <p>Post not found.</p>;
 
     return (
-        <form onSubmit={handleSubmit} className='space-y-4 bg-white p-6 rounded shadow'>
-            <h2 className='text-xl font-bold'>Edit Post</h2>
-            <input type="text"
-            placeholder='Post Title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className='w-full p-2 border rounded'
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+                type="text"
+                className="border p-2 rounded w-full"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
             />
-            <input type="text"
-            placeholder='Author'
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className='w-full p-2 border rounded'
+            <input
+                type="text"
+                className="border p-2 rounded w-full"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                required
             />
-            <input type="text"
-            placeholder='Write your content here...'
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className='w-full p-2 border rounded'
+            <textarea
+                className="border p-2 rounded w-full"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+            ></textarea>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="border p-2 rounded w-full"
             />
-            <input type="file"
-            onChange={handleImageUpload}
-            className='w-full p-2 border rounded'
-            />
-            <button
-            type='submit'
-            className='bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800'
-            >Update Post</button>
+            {image && <img src={image} alt="Preview" className="rounded w-32" />}
+            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                Save Changes
+            </button>
         </form>
-    )
+    );
 }
-
-export default EditPost

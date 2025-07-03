@@ -1,65 +1,41 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { deletePost } from '../store/postSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { deletePost } from '../store/postsSlice';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
-function PostList() {
-    const [search,setSearch] = useState("");
-    const dispatch = useDispatch()
-    const posts = useSelector((state) => state.post.posts)
-    const filterPosts = posts.filter(post => {
-        const matchedSearch = post.title.toLowerCase().includes(search.toLowerCase())
-        return matchedSearch;
-    })
+export default function PostList() {
+    const posts = useSelector((state) => state.post.posts || []);
+    const dispatch = useDispatch();
+    const [search, setSearch] = useState('');
+
+    const filteredPosts = posts.filter(post =>
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <div>
-            <div className='flex gap-4 mb-4'>
-                <input type="text"
-                placeholder='Search posts...'
+            <input
+                type="text"
+                placeholder="Search by title..."
+                className="border p-2 rounded w-full mb-4"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className='border p-2 rounded w-full'
-                />
+            />
+            <div className="space-y-4">
+                {filteredPosts.map(post => (
+                    <div key={post.id} className="bg-white p-4 rounded shadow">
+                        <h3 className="font-bold text-lg">{post.title}</h3>
+                        <p className="text-sm text-gray-600 mb-1">by {post.author}</p>
+                        {post.image && <img src={post.image} alt="" className="my-2 rounded" />}
+                        <p>{post.content.slice(0, 100)}...</p>
+                        <div className="flex gap-2 mt-2">
+                            <Link to={`/posts/${post.id}`} className="text-blue-600 text-sm">View</Link>
+                            <Link to={`/edit/${post.id}`} className="text-yellow-600 text-sm">Edit</Link>
+                            <button onClick={() => dispatch(deletePost(post.id))} className="text-red-600 text-sm">Delete</button>
+                        </div>
+                    </div>
+                ))}
             </div>
-            {
-                filterPosts.length === 0 ? (
-                    <p className='text-gray-500'>No posts available</p>
-                ) : (
-                    <ul className='space-y-4'>
-                        {
-                            filterPosts.map((post) => {
-                                <li key={post.id} className='p-4 bg-white shadow rounded'>
-                                    <Link to={`/posts/${post.id}`} className='mt-2 max-h-48 pbjext-cover rounded'>{post.title}
-                                    </Link>
-                                    <p
-                                    className='text-sm text-gray-500'>
-                                        By{post.author}
-                                    </p>
-                                    <p
-                                    className='text-gray-600 text-sm mt-1'>
-                                        {post.content.slice(0,100)}...
-                                    </p>
-                                    {
-                                        post.image && (
-                                            <img src={post.image} alt='cover' className='mt-2 max-h-48 object-cover rounded'/>
-                                        )
-                                    }
-                                    <div className='flex gap-3 mt-2 text-sm'>
-                                        <Link to={`/edit/${post.id}`} className='text-blue-500'>Edit</Link>
-                                        <button
-                                        className='text-red-500'
-                                        onClick={dispatch(deletePost(post.id))}
-                                        >Delete
-                                        </button>
-                                    </div>
-                                </li>
-                            })
-                        }
-                    </ul>
-                )
-            }
         </div>
-    )
+    );
 }
-
-export default PostList

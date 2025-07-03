@@ -1,21 +1,19 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import {useParams} from 'react-dom'
+import { useParams, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-function PostDetails() {
-    const {id} = useParams()
-    const post = useSelector((state) => state.post.posts.find((p) => p.id === Number(id)));
-    if(!post){
-        <p className='text-red-500'>Post Not Found</p>
-    }
+export default function PostDetails() {
+    const { id } = useParams();
+    const post = useSelector((state) => state.post.posts.find(p => p.id === parseInt(id)));
+
+    if (!post) return <p>Post not found.</p>;
+
     return (
-        <div className='bg-white p-6 rounded shadow'>
-            <h2 className='text-2xl font-bold mb-2'>{post.title}</h2>
-            <p className='text-sm text-gray-500 mb-2'>{post.author}</p>
-            {post.image && <img src={post.image} alt='cover' className='nb-4 max-h-60 rounded'/>}
-            <p className='text-gray-700 whitespace-pre-wrap'>{post.content}</p>
+        <div className="bg-white p-6 rounded shadow">
+            <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+            <p className="text-sm text-gray-600 mb-2">By {post.author}</p>
+            {post.image && <img src={post.image} alt="" className="my-2 rounded" />}
+            <p>{post.content}</p>
+            <Link to="/posts" className="text-blue-600 mt-4 inline-block">← Back to Posts</Link>
         </div>
-    )
+    );
 }
-
-export default PostDetails

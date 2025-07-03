@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Home() {
+export default function Home() {
     return (
         <div className='text-center'>
             <h1 className='text-3xl font-bold mb-4'>Welcome to the Blogging Platform</h1>
@@ -9,4 +9,3 @@ function Home() {
     )
 }
 
-export default Home
