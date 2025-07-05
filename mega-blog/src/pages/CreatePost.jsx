@@ -25,25 +25,25 @@ export default function CreatePost() {
     //     }
     // };
 
-    
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
 
-  const options = {
-    maxSizeMB: 0.2,
-    maxWidthOrHeight: 800,
-    useWebWorker: true,
-  };
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-  try {
-    const compressedFile = await imageCompression(file, options);
-    const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
-    setImage(base64);
-  } catch (err) {
-    console.error('Image compression error:', err);
-  }
-};
+        const options = {
+            maxSizeMB: 0.2,
+            maxWidthOrHeight: 800,
+            useWebWorker: true,
+        };
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+            const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+            setImage(base64);
+        } catch (err) {
+            console.error('Image compression error:', err);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
