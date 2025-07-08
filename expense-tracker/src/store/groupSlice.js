@@ -1,6 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const savedData = JSON.parse(localStorage.getItem("groups")) || []
+let savedData = [];
+
+try {
+    const stored = localStorage.getItem('groups')
+    savedData = stored ? JSON.parse(stored) : []
+} catch {
+    savedData = []
+}
+
+// const savedData = JSON.parse(localStorage.getItem("groups")) || []
 
 const initialState = {
     groups: savedData
@@ -12,12 +21,15 @@ export const groupSlice = createSlice({
     reducers:{
         addGroup: (state,action) => {
             const newGroup = {
-                id: Date.now(),
-                name: action.payload.name,
+                id: Date.now().toString(),
+                name: action.payload,
                 members: [],
                 expenses: []
             }
-            state.groups = state.groups.push(newGroup)
+            if (!Array.isArray(state.groups)) {
+                state.groups = [];
+            }
+            state.groups.push(newGroup)
             localStorage.setItem("groups",JSON.stringify(state.groups))
         },
 
