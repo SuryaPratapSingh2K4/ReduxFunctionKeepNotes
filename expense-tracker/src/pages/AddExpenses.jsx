@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 
 function AddExpenses() {
     const { groupId } = useParams()
-    const group = useSelector(state => state.group.groups.find(g => g.id === groupId))
+    const group = useSelector(state => state.group.groups.find(g => String(g.id) === String(groupId)))
     const dispatch = useDispatch()
     const [amount, setAmount] = useState("")
     const [description, setDescription] = useState("")
@@ -27,14 +27,14 @@ function AddExpenses() {
             <h2 className='text-xl font-bold mb-4'>Add Expenses</h2>
             <input
                 type="number"
-                placeholder=''
+                placeholder='enter the amount'
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className='border p-4 rounded w-full mb-2'
             />
             <input
                 type="number"
-                placeholder=''
+                placeholder='give the details'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className='border p-4 rounded w-full mb-2'

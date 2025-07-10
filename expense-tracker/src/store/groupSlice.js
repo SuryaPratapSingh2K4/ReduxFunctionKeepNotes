@@ -12,7 +12,7 @@ try {
 // const savedData = JSON.parse(localStorage.getItem("groups")) || []
 
 const initialState = {
-    groups: savedData
+    groups: Array.isArray(savedData) ? savedData : []
 }
 
 export const groupSlice = createSlice({
@@ -35,9 +35,15 @@ export const groupSlice = createSlice({
 
         addMember: (state,action) => {
             const {groupId, memberName} = action.payload;
-            const group = state.groups.find(g => g.id === groupId);
+            const group = state.groups.find((g) => g.id === groupId);
             if(group){
-                group.members.push({id: Date.now(), name: memberName});
+                if (!Array.isArray(group.members)) {
+                    group.members = [];
+                }
+                group.members.push({
+                    id: Date.now().toString(),
+                    name: memberName
+                });
                 localStorage.setItem("groups",JSON.stringify(state.groups))
             }
         },
