@@ -1,18 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, nanoid} from "@reduxjs/toolkit"
 
-let savedData = [];
+const loadData = localStorage.getItem("groups") ? JSON.parse(localStorage.getItem("groups")) : [];
 
-try {
-    const stored = localStorage.getItem('groups')
-    savedData = stored ? JSON.parse(stored) : []
-} catch {
-    savedData = []
+const savedData = (groups) => {
+    localStorage.setItem("groups", JSON.stringify(groups));
 }
 
 // const savedData = JSON.parse(localStorage.getItem("groups")) || []
 
 const initialState = {
-    groups: Array.isArray(savedData) ? savedData : []
+    groups: loadData
 }
 
 export const groupSlice = createSlice({
@@ -21,7 +18,7 @@ export const groupSlice = createSlice({
     reducers:{
         addGroup: (state,action) => {
             const newGroup = {
-                id: Date.now().toString(),
+                id: nanoid(),
                 name: action.payload,
                 members: [],
                 expenses: []
@@ -30,7 +27,21 @@ export const groupSlice = createSlice({
                 state.groups = [];
             }
             state.groups.push(newGroup)
-            localStorage.setItem("groups",JSON.stringify(state.groups))
+            savedData(state.newGroup);
+        },
+
+        editGroupName : (state,action) => {
+            const {groupId, newName} = action.payload;
+            const group = state.groups.find((g) => g.id === groupId);
+            if(group){
+                group.name = newName;
+                savedData(state.groups);
+            }
+        },
+
+        deleteGroup : (state,action) => {
+            state.groups = state.groups.filter((g) => g.id !== action.payload);
+            savedData(state.groups);
         },
 
         addMember: (state,action) => {
@@ -41,10 +52,32 @@ export const groupSlice = createSlice({
                     group.members = [];
                 }
                 group.members.push({
-                    id: Date.now().toString(),
+                    id: nanoid(),
                     name: memberName
                 });
-                localStorage.setItem("groups",JSON.stringify(state.groups))
+                savedData(state.groups);
+            }
+        },
+
+        editMemberName: (state,action) => {
+            const{groupId, memberId, newName} = action.payload;
+            const group = state.groups.find((g) => g.id === groupId)
+            if(group){
+                const member = state.groups.members.find((m) => m.id === memberId);
+                if(member){
+                    member.name = newName;
+                    savedData(state.groups)
+                }
+            }
+        },
+
+        deleteMember: (state,action) => {
+            const {groupId,memberId} = action.payload;
+            const group = state.groups.find((g) => g.id === groupId);
+            if(group){
+                group.members = group.members.filter((m) => m.id !== memberId);
+                group.expenses = group.expenses.filter((e) => !e.sharedWith.includes(memberId))
+                savedData(state.groups);
             }
         },
 
@@ -53,17 +86,43 @@ export const groupSlice = createSlice({
             const group = state.groups.find(g => g.id === groupId);
             if(group){
                 group.expenses.push({
-                    id: Date.now(),
+                    id: nanoid(),
                     payerId,
                     amount: parseFloat(amount),
                     description,
-                    sharedWith
+                    sharedWith,
+                    date: new Date().toISOString()
                 });
-                localStorage.setItem("groups",JSON.stringify(state.groups))
+                savedData(state.groups);
+            }
+        },
+
+        editExpense: (state, action) => {
+            const {groupId,expenseId, updatedExpense} = action.payload;
+            const group = state.groups.find(g => g.id === groupId);
+            if(group){
+                const expense = group.expenses.find(e => e.id === expenseId);
+                if(expense){
+                    expense.payerId = updatedExpense.payerId;
+                    expense.amount = parseFloat(updatedExpense.amount);
+                    expense.description = updatedExpense.description;
+                    expense.sharedWith = updatedExpense.sharedWith;
+                    expense.date = new Date().toISOString();
+                    savedData(state.groups);
+                }
+            }
+        },
+
+        deleteExpense: (state, action) => {
+            const {groupId,expenseId} = action.payload;
+            const group = state.groups.find(g => g.id === groupId);
+            if(group){
+                group.expenses = group.expenses.filter(e => e.id !== expenseId);
+                savedData(state.groups);
             }
         }
     }
 })
 
 export default groupSlice.reducer;
-export const {addGroup,addMember,addExpenses} = groupSlice.actions;
+export const {addGroup,editGroupName,deleteGroup,addMember,editMemberName,deleteMember,addExpenses,editExpense,deleteExpense} = groupSlice.actions;

@@ -3,6 +3,6 @@ import groupReducer from "../store/groupSlice"
 
 export const store = configureStore({
     reducer: {
-        group: groupReducer
+        groups: groupReducer
     }
 })
