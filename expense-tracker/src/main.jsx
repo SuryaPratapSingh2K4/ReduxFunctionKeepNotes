@@ -10,6 +10,7 @@ import GroupList from './pages/GroupList.jsx'
 import AddExpenses from './pages/AddExpenses.jsx'
 import GroupMembers from './pages/GroupMembers.jsx'
 import Home from './pages/Home.jsx'
+import GroupDetails from './pages/GroupDetails.jsx'
 
 // const router = createBrowserRouter([
 //   {
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
   //   <RouterProvider router={router} />
   // </Provider>,
   <StrictMode>
-    <Home />
+    {/* <Home /> */}
+    <GroupDetails />
   </StrictMode>
 )
