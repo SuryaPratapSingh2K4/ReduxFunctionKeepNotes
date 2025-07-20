@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom'
-import { addExpenses, addMember, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
+import { addExpenses, addMember, deleteExpense, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -59,9 +59,9 @@ function GroupDetails() {
     // }
 
     const handleAddExpenses = () => {
-        const {description,amount,payerId,sharedWith} = newExpense;
-        if(!description || !amount || !payerId || sharedWith.length === 0) return;
-        dispatch(addExpenses({groupId, ...newExpense}));
+        const { description, amount, payerId, sharedWith } = newExpense;
+        if (!description || !amount || !payerId || sharedWith.length === 0) return;
+        dispatch(addExpenses({ groupId, ...newExpense }));
         setNewExpense({
             description: "",
             amount: "",
@@ -240,6 +240,31 @@ function GroupDetails() {
                         >
                             Add Expenses
                         </button>
+                    </div>
+
+                    <div className='bg-gray-800 p-4 rounded-lg mt-4'>
+                        <h3 className='text-lg font-semibold mb-2'>All Expenses</h3>
+                        {
+                            group.expenses.length === 0 ? (
+                                <p className='text-sm text-gray-400'>No expenses added yet.</p>
+                            ) :
+                                (
+                                    group.expenses.map((exp) => (
+                                        <div key={exp.id}
+                                            className='border-b border-gray-700 py-2 flex justify-between items-start'
+                                        >
+                                            <div>
+                                                <p className='font-medium'>{exp.description}</p>
+                                                <p className='text-sm text-gray-400'>{exp.amount} paid by {group.members.find((m) => m.id === exp.payerId).name}</p>
+                                                <p className='text-xs text-gray-500'>Shared With {exp.sharedWith.map((id) => group.members.find((m) => m.id === id).name).join(", ")}</p>
+                                            </div>
+                                            <button onClick={() => dispatch(deleteExpense({ groupId, expenseId: exp.id }))} className='text-red-500 hover:text-red-400'>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))
+                                )
+                        }
                     </div>
                 </div>
             </div>
