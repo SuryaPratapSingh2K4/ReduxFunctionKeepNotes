@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom'
-import { addMember, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
+import { addExpenses, addMember, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -33,6 +33,41 @@ function GroupDetails() {
             dispatch(addMember({ groupId, memberName: newMember }))
             setNewMember("");
         }
+    }
+
+    const handleCheckboxChange = (memberId) => {
+        if (newExpense.sharedWith.includes(memberId)) {
+            setNewExpense({
+                ...newExpense,
+                sharedWith: newExpense.sharedWith.filter((id) => id !== memberId)
+            })
+        } else {
+            setNewExpense({ ...newExpense, sharedWith: [...newExpense.sharedWith, memberId] })
+        }
+    }
+
+    // const handleAddExpenses = () => {
+    //     if (newExpense.description.trim() && newExpense.amount && newExpense.payerId) {
+    //         dispatch(addExpenses({
+    //             description: newExpense.description,
+    //             amount: parseFloat(newExpense.amount),
+    //             payerId: newExpense.payerId,
+    //             sharedWith: newExpense.sharedWith,
+    //             groupId
+    //         }))
+    //     }
+    // }
+
+    const handleAddExpenses = () => {
+        const {description,amount,payerId,sharedWith} = newExpense;
+        if(!description || !amount || !payerId || sharedWith.length === 0) return;
+        dispatch(addExpenses({groupId, ...newExpense}));
+        setNewExpense({
+            description: "",
+            amount: "",
+            payerId: "",
+            sharedWith: []
+        });
     }
 
     return (
@@ -180,7 +215,31 @@ function GroupDetails() {
                                     ))
                                 }
                             </select>
+
+                            <div className='bg-gray-700 rounded-lg border border-gray-600 p-2'>
+                                <p className='text-sm mb-1'>Shared With</p>
+                                <div>
+                                    {
+                                        group.members.map((member) => (
+                                            <label key={member.id}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={newExpense.sharedWith.includes(member.id)}
+                                                    onChange={() => handleCheckboxChange(member.id)}
+                                                />
+                                                {member.name}
+                                            </label>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                         </div>
+                        <button
+                            onClick={handleAddExpenses}
+                            className='bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg'
+                        >
+                            Add Expenses
+                        </button>
                     </div>
                 </div>
             </div>
