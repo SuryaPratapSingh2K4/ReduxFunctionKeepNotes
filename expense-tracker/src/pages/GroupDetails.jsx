@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom'
-import { addExpenses, addMember, deleteExpense, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
+import { addExpenses, addMember, deleteGroup, deleteMember, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -346,6 +346,19 @@ function GroupDetails() {
                                 </div>
                             ))
                         }
+                    </div>
+
+                    <div className='mt-6'>
+                        <h2 className="text-xl font-semibold mb-2">Balance Summary:</h2>
+                        <ul>
+                            {
+                                Object.entries(group.balances).map(([id, balance]) => (
+                                    <li key={id} className='mb-2'>
+                                        {group.members.find(m => m.id === id)?.name}: {balance >= 0 ? `You owe $${balance.toFixed(2)}` : `You are owed $${Math.abs(balance).toFixed(2)}`}
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     </div>
                 </div>
             </div>
