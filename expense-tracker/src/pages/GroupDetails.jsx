@@ -22,6 +22,14 @@ function GroupDetails() {
     const [editingName, setEditingName] = useState(false);
     const [editName, setEditName] = useState("");
 
+    const [editingExpense, setEditingExpense] = useState(false);
+    const [editExpense,setEditExpense] = useState({
+        description: "",
+        amount: "",
+        payerId: "",
+        sharedWith: []
+    });
+
     const handleEditGroup = () => {
         dispatch(editGroupName({ groupId, newName: editGroupName }))
         setEditingGroup(false);
@@ -63,6 +71,22 @@ function GroupDetails() {
         if (!description || !amount || !payerId || sharedWith.length === 0) return;
         dispatch(addExpenses({ groupId, ...newExpense }));
         setNewExpense({
+            description: "",
+            amount: "",
+            payerId: "",
+            sharedWith: []
+        });
+    }
+
+    const handleUpdateExpense = () => {
+        dispatch(editExpense({groupId,expenseId: editExpense.id,editExpense: ({
+            description: editExpense.description,
+            amount: parseFloat(editExpense.amount),
+            payerId: editExpense.payerId,
+            sharedWith: editExpense.sharedWith
+        })}));
+        setEditingExpense(false);
+        setEditExpense({
             description: "",
             amount: "",
             payerId: "",
@@ -242,28 +266,85 @@ function GroupDetails() {
                         </button>
                     </div>
 
-                    <div className='bg-gray-800 p-4 rounded-lg mt-4'>
-                        <h3 className='text-lg font-semibold mb-2'>All Expenses</h3>
+                    <div className='mb-6'>
+                        <h2 className='text-lg font-semibold mb-2'>All Expenses</h2>
                         {
-                            group.expenses.length === 0 ? (
-                                <p className='text-sm text-gray-400'>No expenses added yet.</p>
-                            ) :
-                                (
-                                    group.expenses.map((exp) => (
-                                        <div key={exp.id}
-                                            className='border-b border-gray-700 py-2 flex justify-between items-start'
-                                        >
+                            group.expenses.map((expense) => (
+                                <div key={expense.id} className='border p-2 mb-2'>
+                                    {
+                                        editingExpense === expense.id ?
+                                        (
                                             <div>
-                                                <p className='font-medium'>{exp.description}</p>
-                                                <p className='text-sm text-gray-400'>{exp.amount} paid by {group.members.find((m) => m.id === exp.payerId).name}</p>
-                                                <p className='text-xs text-gray-500'>Shared With {exp.sharedWith.map((id) => group.members.find((m) => m.id === id).name).join(", ")}</p>
+                                                <input
+                                                type="text"
+                                                placeholder='description'
+                                                value={editExpense.description}
+                                                onChange={(e) => setEditExpense({...editExpense, description: e.target.value})}
+                                                className='border px-2 py-1 rounded-lg'
+                                                />
+                                                <input
+                                                type="number"
+                                                placeholder='amount'
+                                                value={editExpense.amount}
+                                                onChange={(e) => setEditExpense({...editExpense, amount: e.target.value})}
+                                                className='border px-2 py-1 rounded-lg'
+                                                />
+                                                <select value={editExpense.payerId}
+                                                onChange={(e) => setEditExpense({...editExpense, payerId: e.target.value})}
+                                                >
+                                                    <option value="">
+                                                        Select Payer
+                                                    </option>
+                                                    {
+                                                        group.members.map((m)=>(
+                                                            <option
+                                                            key={m.id}
+                                                            value={m.id}>
+                                                                {m.name}
+                                                            </option>
+                                                        ))
+                                                    }
+                                                </select>
+                                                <select
+                                                multiple
+                                                className='border px-2 py-1 rounded-lg'
+                                                value={editExpense.sharedWith}
+                                                onChange={(e) => setEditExpense({...editExpense,
+                                                    sharedWith: [...e.target.selectedOptions].map(option => option.value)
+                                                })}
+                                                >
+                                                    <option value="">Select Shared With</option>
+                                                    {
+                                                        group.members.map((m) => (
+                                                            <option
+                                                            key={m.id}
+                                                            value={m.id}>{m.name}</option>
+                                                        ))
+                                                    }
+                                                </select>
+                                                <button className='bg-green-500 text-white px-2 py-1 mr-2' onClick={handleUpdateExpense}>Update</button>
+                                                <button className='bg-red-500 text-white px-2 py-1 mr-2' onClick={() => setEditingExpense(false)}>Cancel</button>
+
                                             </div>
-                                            <button onClick={() => dispatch(deleteExpense({ groupId, expenseId: exp.id }))} className='text-red-500 hover:text-red-400'>
-                                                Delete
-                                            </button>
-                                        </div>
-                                    ))
-                                )
+                                        ) :
+                                        (
+                                            <div>
+                                                <p>{expense.description}</p>
+                                                <p>Amount: {expense.amount}</p>
+                                                <p>Payer: {group.members.find(m => m.id === expense.payerId)?.name}</p>
+                                                <p>Shared With: {expense.sharedWith.map(id => group.members.find(m => m.id === id)?.name).join(", ")}</p>
+                                                <button className='bg-blue-500 text-white px-2 py-1 mr-2' onClick={() => setEditingExpense(true) && setEditExpense({
+                                                    id: expense.id,
+                                                    description: expense.description,
+                                                    amount: expense.amount,
+                                                    payerId: expense.payerId,
+                                                    sharedWith: expense.sharedWith
+                                                })}>Edit</button>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            ))
                         }
                     </div>
                 </div>
