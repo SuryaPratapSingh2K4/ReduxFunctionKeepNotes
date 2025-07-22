@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import groupReducer from "../store/groupSlice"
 
-export const store = configureStore({
+const store = configureStore({
     reducer: {
         group: groupReducer
     }
 })
+
+export default store;
