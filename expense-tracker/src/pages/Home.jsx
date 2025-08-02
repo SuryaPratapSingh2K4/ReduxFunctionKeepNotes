@@ -1,25 +1,102 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
+import { addGroup, editGroupName, setSearchItem } from '../store/groupSlice';
 
 function Home() {
-    const groups = useSelector((state) => state.group.groups);
+    const dispatch = useDispatch();
+    const groups = useSelector((s) => s.group.groups.filter((g) => g.name.toLowerCase().includes(s.group.searchTerm.toLowerCase())));
+    const search = useSelector((s) => s.group.searchTerm);
+
+    const [newName, setNewName] = useState("");
+    const [editingId, setEditingId] = useState(null);
+    const [editingValue, seteditingValue] = useState("");
+
+    const handleAdd = () => {
+        if (newName.trim()) {
+            dispatch(addGroup(newName));
+            setNewName("");
+        }
+    }
+
+    const handleSaveEdit = () => {
+        dispatch(editGroupName({ groupId: editingId, name: editingValue }));
+        setEditingId(null);
+        setNewName("");
+    }
+
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Trip Groups</h1>
-                <Link
-                    to="/create"
-                    className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">
-                    + New Group
-                </Link>
+        <div className="max-w-2xl mx-auto p-4">
+            <h1 className='text-2xl font-bold mb-4'>Trip Expenser</h1>
+
+            <input
+                type="text"
+                value={search}
+                onChange={e => dispatch(setSearchItem(e.target.value))}
+                placeholder='SearchGroups...'
+                className='w-full mb-4 p-2 border rounded'
+            />
+
+            <div className='flex gap-2 mb-4'>
+                <input
+                    type="text"
+                    value={newName}
+                    onChange={e => setNewName(e.target.value)}
+                    placeholder='New Group Name'
+                    className='flex-1 p-2 border rounded'
+                />
+                <button onClick={handleAdd} className='px-4 py-2 bg-blue-600 text-white rounded'>
+                    Add
+                </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {groups.map((group) => (
-                    <GroupCard key={group.id} group={group} />
-                ))}
-            </div>
+
+            {
+                groups.map((g) => (
+                    <div key={g.id} className='border rounded p-3 mb-2 flex justify-between items-center'>
+                        {editingId === g.id ?
+                            (
+                                <div>
+                                    <input
+                                        type="text"
+                                        value={editingValue}
+                                        onChange={e => seteditingValue(e.target.value)}
+                                        className='border p-2 rounded w-full mb-2'
+                                        onBlur={handleSaveEdit}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSaveEdit();
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            ) :
+                            (
+                                <Link to={`/group/${g.id}`} className='text-blue-600 font-semibold hover:underline'>
+                                    {g.name}
+                                </Link>
+                            )
+                        }
+                        <div className='flex gap-2'>
+                            <button
+                                onClick={() => {
+                                    setEditingId(g.id)
+                                    seteditingValue(g.name)
+                                }}
+                                className='text-sm text-blue-600'
+                            >
+                                Edit
+                            </button>
+                            <button
+                                onClick={() => dispatch({ groupId: g.id })}
+                                className='text-sm text-red-600'
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ))
+            }
         </div>
     )
 }
