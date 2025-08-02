@@ -62,13 +62,13 @@ function Home() {
                                         value={editingValue}
                                         onChange={e => seteditingValue(e.target.value)}
                                         className='border p-2 rounded w-full mb-2'
-                                        onBlur={handleSaveEdit}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleSaveEdit();
-                                            }
-                                        }}
                                     />
+                                    <button
+                                        className='text-sm text-green-600 rounded'
+                                        onClick={handleSaveEdit}
+                                    >
+                                        Save
+                                    </button>
                                 </div>
                             ) :
                             (
@@ -83,13 +83,13 @@ function Home() {
                                     setEditingId(g.id)
                                     seteditingValue(g.name)
                                 }}
-                                className='text-sm text-blue-600'
+                                className='text-sm text-blue-600 rounded'
                             >
                                 Edit
                             </button>
                             <button
                                 onClick={() => dispatch({ groupId: g.id })}
-                                className='text-sm text-red-600'
+                                className='text-sm text-red-600 rounded'
                             >
                                 Delete
                             </button>
