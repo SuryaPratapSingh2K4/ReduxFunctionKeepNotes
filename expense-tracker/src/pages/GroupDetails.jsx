@@ -11,14 +11,20 @@ function GroupDetails() {
     const [newMember, setNewMember] = useState("");
     const [editingMemberId,setEditingMemberId] = useState(null);
     const [editingMemberName,setEditingMemberName] = useState("");
+    const [expenseForm,setExpenseForm] = useState({
+        description: "",
+        amount: "",
+        payerId: "",
+        sharedWith: []
+    })
 
     const handleAddMember = () => {
-        dispatch(addMember({ id: groupId, name: newMember }))
+        dispatch(addMember({ id: groupId, name: newMember.trim() }))
         setNewMember("");
     }
 
     const handleSaveMember = () => {
-        dispatch(editMemberName({groupId,memberId: editingMemberId, name: editingMemberName}))
+        dispatch(editMemberName({groupId,memberId: editingMemberId, name: editingMemberName.trim()}))
         setEditingMemberName("")
         setEditingMemberId(null)
     }
@@ -59,14 +65,14 @@ function GroupDetails() {
                                     />
                                     <button
                                     onClick={handleSaveMember}
-                                    className='text-xs text-blue-600'
+                                    className='text-xs text-green-600'
                                     >
                                         Save
                                     </button>
                                 </div>
                             ) :
                             (
-                                <div>
+                                <div key={m.id} className='flex items-center justify-between p-2 rounded'>
                                     <span>{m.name}</span>
                                     <div className='flex gap-2'>
                                         <button
@@ -80,7 +86,7 @@ function GroupDetails() {
                                         </button>
                                         <button
                                         onClick={() => dispatch(deleteMember({groupId,memberId: m.id}))}
-                                        className='text-xs text-blue-600'
+                                        className='text-xs text-red-600'
                                         >
                                             Delete
                                         </button>
@@ -90,6 +96,11 @@ function GroupDetails() {
                         ))
                     }
                 </div>
+            </section>
+
+
+            <section>
+
             </section>
         </div>
     )
