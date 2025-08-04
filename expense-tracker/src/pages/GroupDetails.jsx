@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
-import { addMember,deleteMember,editMemberName } from '../store/groupSlice';
+import { addMember, deleteMember, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -9,9 +9,9 @@ function GroupDetails() {
     const group = useSelector(s => s.group.groups.find(g => g.id === groupId));
 
     const [newMember, setNewMember] = useState("");
-    const [editingMemberId,setEditingMemberId] = useState(null);
-    const [editingMemberName,setEditingMemberName] = useState("");
-    const [expenseForm,setExpenseForm] = useState({
+    const [editingMemberId, setEditingMemberId] = useState(null);
+    const [editingMemberName, setEditingMemberName] = useState("");
+    const [expenseForm, setExpenseForm] = useState({
         description: "",
         amount: "",
         payerId: "",
@@ -24,7 +24,7 @@ function GroupDetails() {
     }
 
     const handleSaveMember = () => {
-        dispatch(editMemberName({groupId,memberId: editingMemberId, name: editingMemberName.trim()}))
+        dispatch(editMemberName({ groupId, memberId: editingMemberId, name: editingMemberName.trim() }))
         setEditingMemberName("")
         setEditingMemberId(null)
     }
@@ -55,49 +55,104 @@ function GroupDetails() {
                     {
                         group.map(m => (
                             editingMemberId === m.id ?
-                            (
-                                <div className='flex items-center justify-between border p-2 rounded'>
-                                    <input
-                                    type="text"
-                                    value={editingMemberName}
-                                    onChange={e => setEditingMemberName(e.target.value)}
-                                    className='border-b-2 outline-none'
-                                    />
-                                    <button
-                                    onClick={handleSaveMember}
-                                    className='text-xs text-green-600'
-                                    >
-                                        Save
-                                    </button>
-                                </div>
-                            ) :
-                            (
-                                <div key={m.id} className='flex items-center justify-between p-2 rounded'>
-                                    <span>{m.name}</span>
-                                    <div className='flex gap-2'>
+                                (
+                                    <div className='flex items-center justify-between border p-2 rounded'>
+                                        <input
+                                            type="text"
+                                            value={editingMemberName}
+                                            onChange={e => setEditingMemberName(e.target.value)}
+                                            className='border-b-2 outline-none'
+                                        />
                                         <button
-                                        onClick={() => {
-                                            setEditingMemberId(m.id)
-                                            setEditingMemberName(m.name)
-                                        }}
-                                        className='text-xs text-blue-600'
+                                            onClick={handleSaveMember}
+                                            className='text-xs text-green-600'
                                         >
-                                            Edit
-                                        </button>
-                                        <button
-                                        onClick={() => dispatch(deleteMember({groupId,memberId: m.id}))}
-                                        className='text-xs text-red-600'
-                                        >
-                                            Delete
+                                            Save
                                         </button>
                                     </div>
-                                </div>
-                            )
+                                ) :
+                                (
+                                    <div key={m.id} className='flex items-center justify-between p-2 rounded'>
+                                        <span>{m.name}</span>
+                                        <div className='flex gap-2'>
+                                            <button
+                                                onClick={() => {
+                                                    setEditingMemberId(m.id)
+                                                    setEditingMemberName(m.name)
+                                                }}
+                                                className='text-xs text-blue-600'
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => dispatch(deleteMember({ groupId, memberId: m.id }))}
+                                                className='text-xs text-red-600'
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
                         ))
                     }
                 </div>
             </section>
-
+            <h2 className='text-xl font-semibold mb-2'>Expenses</h2>
+            <div className='grid gap-2 mb-4 border p-3 rounded'>
+                <input
+                    type="text"
+                    placeholder='description'
+                    value={expenseForm.description}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
+                    className='border p-1 rounded'
+                />
+                <input
+                    type="number"
+                    placeholder='amount'
+                    value={expenseForm.amount}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
+                    className='border p-1 rounded'
+                />
+                <select
+                    value={expenseForm.payerId}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, payerId: e.target.value })}
+                    className='border p-1 rounded'
+                >
+                    <option value="">
+                        Who Paid?
+                    </option>
+                    {
+                        group.members.map((m) =>
+                        (
+                            <option key={m.id} value={m.id}>
+                                {m.name}
+                            </option>
+                        )
+                        )
+                    }
+                </select>
+                <div>
+                    <span className='text-sm mr-2'>Shared With:</span>
+                    {
+                        group.members.map((m) => (
+                            <label key={m.id}>
+                                <input
+                                type="checkbox"
+                                checked={expenseForm.sharedWith.includes(m.id)}
+                                onChange={(e) => {
+                                    const arr = expenseForm.sharedWith;
+                                    const next = e.target.checked ?
+                                    [...arr, m.id] :
+                                    arr.filter(id => id !== m.id);
+                                    setExpenseForm({...expenseForm,sharedWith: next})
+                                }}
+                                />
+                                {m.name}
+                            </label>
+                        ))
+                    }
+                </div>
+            </div>
 
             <section>
 
