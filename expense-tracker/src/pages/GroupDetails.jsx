@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
-import { addMember, deleteMember, editMemberName } from '../store/groupSlice';
+import { addMember, deleteExpense, deleteMember, editExpense, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -17,6 +17,8 @@ function GroupDetails() {
         payerId: "",
         sharedWith: []
     })
+    const [editingExpenseId, setEditingExpenseId] = useState(null);
+
 
     const handleAddMember = () => {
         dispatch(addMember({ id: groupId, name: newMember.trim() }))
@@ -28,6 +30,16 @@ function GroupDetails() {
         setEditingMemberName("")
         setEditingMemberId(null)
     }
+
+    const resetExpenseForm = () => {
+        setExpenseForm({
+            description: "",
+            amount: "",
+            payerId: "",
+            sharedWith: []
+        });
+    }
+
 
     return (
         <div className='max-w-4xl mx-auto p-4'>
@@ -97,6 +109,9 @@ function GroupDetails() {
                     }
                 </div>
             </section>
+
+
+            <section>
             <h2 className='text-xl font-semibold mb-2'>Expenses</h2>
             <div className='grid gap-2 mb-4 border p-3 rounded'>
                 <input
@@ -152,10 +167,57 @@ function GroupDetails() {
                         ))
                     }
                 </div>
+                <div>
+                    {
+                        editingExpenseId ? (
+                            <div>
+                                <button
+                                onClick={handleUpdateExpense}
+                                className='mr-2 px-3 py-1 bg-green-600 text-white rounded'
+                                >
+                                    Save
+                                </button>
+                                <button
+                                onClick={() => {resetExpenseForm(), setEditingExpenseId(null)}}
+                                className='mr-2 px-3 py-1 bg-red-600 text-white rounded'
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        ) :
+                        (
+                            <div>
+                                {
+                                    group.expenses.map((ex) => (
+                                        <div key={ex.id}
+                                        className='flex items-center justify-between p-2 border rounded'
+                                        >
+                                            <span>
+                                                {ex.description} - ${ex.amount} Paid by {
+                                                    group.members.find(m => m.id == ex.payerId).name
+                                                }
+                                            </span>
+                                            <div>
+                                                <button onClick={() => handleEditExpense(ex.id)}
+                                                    className='text-xs text-blue-600 mr-2'>
+                                                    Edit
+                                                </button>
+                                                <button
+                                                onClick={() => dispatch(deleteExpense({ groupId, expenseId: ex.id }))}
+                                                className='text-xs text-red-600'
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        )
+                    }
+                </div>
             </div>
-
-            <section>
-
             </section>
         </div>
     )
