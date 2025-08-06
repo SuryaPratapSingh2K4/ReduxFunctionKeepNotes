@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
-import { addMember, deleteExpense, deleteMember, editExpense, editMemberName } from '../store/groupSlice';
+import { addExpense, addMember, deleteExpense, deleteMember, editExpense, editMemberName } from '../store/groupSlice';
 
 function GroupDetails() {
     const { groupId } = useParams();
@@ -37,6 +37,52 @@ function GroupDetails() {
             amount: "",
             payerId: "",
             sharedWith: []
+        });
+    }
+
+    const handleAddExpense = () => {
+        const { description, amount, payerId, sharedWith } = expenseForm;
+        if (!description || !amount || !payerId || !sharedWith.length) {
+            return alert("Please fill all fields");
+        }
+        dispatch(addExpense({
+            groupId,
+            expense: {
+                description,
+                amount: parseFloat(amount),
+                payerId,
+                sharedWith
+            }
+        }));
+        setEditingExpenseId(null);
+        resetExpenseForm();
+    }
+
+    const handleUpdateExpense = () => {
+        const { description, amount, payerId, sharedWith } = expenseForm;
+        dispatch(
+            editExpense({
+                groupId,
+                expenseId: editingExpenseId,
+                expense: {
+                    description,
+                    amount: parseFloat(amount),
+                    payerId,
+                    sharedWith
+                }
+            })
+        )
+        setEditingExpenseId(null);
+        resetExpenseForm();
+    }
+
+    const handleEditExpense = (ex) => {
+        setEditingExpenseId(ex.id);
+        setExpenseForm({
+            description: ex.description,
+            amount: ex.amount,
+            payerId: ex.payerId,
+            sharedWith: ex.sharedWith
         });
     }
 
@@ -112,112 +158,121 @@ function GroupDetails() {
 
 
             <section>
-            <h2 className='text-xl font-semibold mb-2'>Expenses</h2>
-            <div className='grid gap-2 mb-4 border p-3 rounded'>
-                <input
-                    type="text"
-                    placeholder='description'
-                    value={expenseForm.description}
-                    onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
-                    className='border p-1 rounded'
-                />
-                <input
-                    type="number"
-                    placeholder='amount'
-                    value={expenseForm.amount}
-                    onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
-                    className='border p-1 rounded'
-                />
-                <select
-                    value={expenseForm.payerId}
-                    onChange={(e) => setExpenseForm({ ...expenseForm, payerId: e.target.value })}
-                    className='border p-1 rounded'
-                >
-                    <option value="">
-                        Who Paid?
-                    </option>
-                    {
-                        group.members.map((m) =>
-                        (
-                            <option key={m.id} value={m.id}>
-                                {m.name}
-                            </option>
-                        )
-                        )
-                    }
-                </select>
+                <h2 className='text-xl font-semibold mb-2'>Expenses</h2>
+                <div className='grid gap-2 mb-4 border p-3 rounded'>
+                    <input
+                        type="text"
+                        placeholder='description'
+                        value={expenseForm.description}
+                        onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
+                        className='border p-1 rounded'
+                    />
+                    <input
+                        type="number"
+                        placeholder='amount'
+                        value={expenseForm.amount}
+                        onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
+                        className='border p-1 rounded'
+                    />
+                    <select
+                        value={expenseForm.payerId}
+                        onChange={(e) => setExpenseForm({ ...expenseForm, payerId: e.target.value })}
+                        className='border p-1 rounded'
+                    >
+                        <option value="">
+                            Who Paid?
+                        </option>
+                        {
+                            group.members.map((m) =>
+                            (
+                                <option key={m.id} value={m.id}>
+                                    {m.name}
+                                </option>
+                            )
+                            )
+                        }
+                    </select>
+                    <div>
+                        <span className='text-sm mr-2'>Shared With:</span>
+                        {
+                            group.members.map((m) => (
+                                <label key={m.id}>
+                                    <input
+                                        type="checkbox"
+                                        checked={expenseForm.sharedWith.includes(m.id)}
+                                        onChange={(e) => {
+                                            const arr = expenseForm.sharedWith;
+                                            const next = e.target.checked ?
+                                                [...arr, m.id] :
+                                                arr.filter(id => id !== m.id);
+                                            setExpenseForm({ ...expenseForm, sharedWith: next })
+                                        }}
+                                    />
+                                    {m.name}
+                                </label>
+                            ))
+                        }
+                    </div>
+                    <div>
+                        {
+                            editingExpenseId ? (
+                                <div>
+                                    <button
+                                        onClick={handleUpdateExpense}
+                                        className='mr-2 px-3 py-1 bg-green-600 text-white rounded'
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        onClick={() => { resetExpenseForm(), setEditingExpenseId(null) }}
+                                        className='mr-2 px-3 py-1 bg-red-600 text-white rounded'
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ) :
+                                (
+                                    <div>
+                                        <button
+                                            onClick={handleAddExpense}
+                                            className='px-3 py-1 bg-blue-600 text-white rounded'
+                                        >
+                                            Add Expense
+                                        </button>
+                                    </div>
+                                )
+                        }
+                    </div>
+                </div>
+
                 <div>
-                    <span className='text-sm mr-2'>Shared With:</span>
                     {
-                        group.members.map((m) => (
-                            <label key={m.id}>
-                                <input
-                                type="checkbox"
-                                checked={expenseForm.sharedWith.includes(m.id)}
-                                onChange={(e) => {
-                                    const arr = expenseForm.sharedWith;
-                                    const next = e.target.checked ?
-                                    [...arr, m.id] :
-                                    arr.filter(id => id !== m.id);
-                                    setExpenseForm({...expenseForm,sharedWith: next})
-                                }}
-                                />
-                                {m.name}
-                            </label>
+                        group.expenses.map((ex) => (
+                            <div key={ex.id}
+                                className='flex items-center justify-between p-2 border rounded'
+                            >
+                                <span>
+                                    {ex.description} - ${ex.amount} Paid by {
+                                        group.members.find(m => m.id == ex.payerId).name
+                                    }
+                                </span>
+                                <div>
+                                    <button onClick={() => handleEditExpense(ex.id)}
+                                        className='text-xs text-blue-600 mr-2'>
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => dispatch(deleteExpense({ groupId, expenseId: ex.id }))}
+                                        className='text-xs text-red-600'
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+
+                            </div>
                         ))
                     }
                 </div>
-                <div>
-                    {
-                        editingExpenseId ? (
-                            <div>
-                                <button
-                                onClick={handleUpdateExpense}
-                                className='mr-2 px-3 py-1 bg-green-600 text-white rounded'
-                                >
-                                    Save
-                                </button>
-                                <button
-                                onClick={() => {resetExpenseForm(), setEditingExpenseId(null)}}
-                                className='mr-2 px-3 py-1 bg-red-600 text-white rounded'
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        ) :
-                        (
-                            <div>
-                                {
-                                    group.expenses.map((ex) => (
-                                        <div key={ex.id}
-                                        className='flex items-center justify-between p-2 border rounded'
-                                        >
-                                            <span>
-                                                {ex.description} - ${ex.amount} Paid by {
-                                                    group.members.find(m => m.id == ex.payerId).name
-                                                }
-                                            </span>
-                                            <div>
-                                                <button onClick={() => handleEditExpense(ex.id)}
-                                                    className='text-xs text-blue-600 mr-2'>
-                                                    Edit
-                                                </button>
-                                                <button
-                                                onClick={() => dispatch(deleteExpense({ groupId, expenseId: ex.id }))}
-                                                className='text-xs text-red-600'
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
             </section>
         </div>
     )
