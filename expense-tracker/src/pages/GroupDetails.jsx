@@ -110,49 +110,44 @@ function GroupDetails() {
                 </div>
 
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-                    {
-                        group.map(m => (
-                            editingMemberId === m.id ?
-                                (
-                                    <div className='flex items-center justify-between border p-2 rounded'>
-                                        <input
-                                            type="text"
-                                            value={editingMemberName}
-                                            onChange={e => setEditingMemberName(e.target.value)}
-                                            className='border-b-2 outline-none'
-                                        />
-                                        <button
-                                            onClick={handleSaveMember}
-                                            className='text-xs text-green-600'
-                                        >
-                                            Save
-                                        </button>
-                                    </div>
-                                ) :
-                                (
-                                    <div key={m.id} className='flex items-center justify-between p-2 rounded'>
-                                        <span>{m.name}</span>
-                                        <div className='flex gap-2'>
-                                            <button
-                                                onClick={() => {
-                                                    setEditingMemberId(m.id)
-                                                    setEditingMemberName(m.name)
-                                                }}
-                                                className='text-xs text-blue-600'
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => dispatch(deleteMember({ groupId, memberId: m.id }))}
-                                                className='text-xs text-red-600'
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                )
-                        ))
-                    }
+                    <h2 className="text-xl font-semibold text-blue-600 mb-2">Members</h2>
+                    {group.members.map((m) => (
+                        <div key={m.id} className="flex items-center justify-between border p-2 rounded mb-1">
+                            {editingMemberId === m.id ? (
+                                <>
+                                    <input
+                                        type="text"
+                                        value={editingMemberName}
+                                        onChange={(e) => setEditingMemberName(e.target.value)}
+                                        className="border-b-2 outline-none"
+                                    />
+                                    <button onClick={handleSaveMember} className="text-xs text-green-600 border rounded">
+                                        Save
+                                    </button>
+                                </>
+                            ) : (
+                                <span className="text-sm text-blue-600">{m.name}</span>
+                            )}
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        setEditingMemberId(m.id);
+                                        setEditingMemberName(m.name);
+                                    }}
+                                    className="text-xs text-blue-600"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => dispatch(deleteMember({ groupId, memberId: m.id }))}
+                                    className="text-xs text-red-600"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </section>
 

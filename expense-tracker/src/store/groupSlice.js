@@ -51,7 +51,7 @@ const groupSlice = createSlice({
         addMember: (state,action) => {
             const group = state.groups.find(g => g.id === action.payload.groupId)
             if(group){
-                group.members.push({id: nanoid, name: action.payload.name});
+                group.members.push({id: nanoid(), name: action.payload.name});
                 saveToLocalStorage(state.groups)
             }
         },
