@@ -3,19 +3,20 @@ import { createSlice, nanoid } from "@reduxjs/toolkit";
 const loadFromLocalStorage = () => {
     try {
         const data = localStorage.getItem('trip-expense-groups');
-        return data ? JSON.parse(data) : []
+        return data ? JSON.parse(data) : [];
     } catch (error) {
-        console.log('error loading from local storage',error);
+        console.log('error loading from local storage', error);
+        return [];
     }
-}
+};
 
 const saveToLocalStorage = (groups) => {
     try {
-        localStorage.setItem('trip-expense-groups',JSON.stringify(groups))
+        localStorage.setItem('trip-expense-groups', JSON.stringify(groups));
     } catch (error) {
-        console.log('error saving to local storage',error);
+        console.log('error saving to local storage', error);
     }
-}
+};
 
 const initialState = {
     groups: loadFromLocalStorage(),
@@ -26,7 +27,7 @@ const groupSlice = createSlice({
     name: 'group',
     initialState,
     reducers: {
-        addGroup: (state,action) => {
+        addGroup: (state, action) => {
             state.groups.push({
                 id: nanoid(),
                 name: action.payload,
@@ -35,78 +36,89 @@ const groupSlice = createSlice({
             });
             saveToLocalStorage(state.groups);
         },
-        deleteGroup: (state,action) => {
+        deleteGroup: (state, action) => {
             state.groups = state.groups.filter(g => g.id !== action.payload.groupId);
             saveToLocalStorage(state.groups);
         },
-        editGroupName: (state,action) => {
+        editGroupName: (state, action) => {
             const group = state.groups.find(g => g.id === action.payload.groupId);
-            if(group){
-                group.name = action.payload.name,
-                saveToLocalStorage(state.groups)
+            if (group) {
+                group.name = action.payload.name;
+                saveToLocalStorage(state.groups);
             }
         },
 
-
-        addMember: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            if(group){
-                group.members.push({id: nanoid(), name: action.payload.name});
-                saveToLocalStorage(state.groups)
+        addMember: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
+                group.members.push({ id: nanoid(), name: action.payload.name });
+                saveToLocalStorage(state.groups);
             }
         },
-        editMemberName: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            const member = group.members.find(m => m.id === action.payload.memberId)
-            if(member){
-                member.name = action.payload.name;
-                saveToLocalStorage(state.groups)
+        editMemberName: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
+                const member = group.members.find(m => m.id === action.payload.memberId);
+                if (member) {
+                    member.name = action.payload.name;
+                    saveToLocalStorage(state.groups);
+                }
             }
         },
-        deleteMember: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            if(group){
-                group.members.filter(m => m.id !== action.payload.memberId);
-                group.expenses = group.expenses(e =>
-                    e.payerId !== action.payload.payerId &&
+        deleteMember: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
+                group.members = group.members.filter(m => m.id !== action.payload.memberId);
+                group.expenses = group.expenses.filter(e =>
+                    e.payerId !== action.payload.memberId &&
                     !e.sharedWith.includes(action.payload.memberId)
                 );
                 saveToLocalStorage(state.groups);
             }
         },
 
-
-        addExpense: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            if(group){
-                group.expenses.push({id: nanoid(), ...action.payload.expense})
-                saveToLocalStorage(state.groups)
-            }
-        },
-        deleteExpense: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            if(group){
-                group.expenses.filter(e => e.id !== action.payload.expenseId);
+        addExpense: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
+                group.expenses.push({ id: nanoid(), ...action.payload.expense });
                 saveToLocalStorage(state.groups);
             }
         },
-        editExpense: (state,action) => {
-            const group = state.groups.find(g => g.id === action.payload.groupId)
-            if(group){
+        deleteExpense: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
+                group.expenses = group.expenses.filter(e => e.id !== action.payload.expenseId);
+                saveToLocalStorage(state.groups);
+            }
+        },
+        editExpense: (state, action) => {
+            const group = state.groups.find(g => g.id === action.payload.groupId);
+            if (group) {
                 const expense = group.expenses.find(e => e.id === action.payload.expenseId);
-                if(expense){
-                    Object.assign(expense,action.payload.updates);
+                if (expense) {
+                    Object.assign(expense, action.payload.updates);
                     saveToLocalStorage(state.groups);
                 }
             }
         },
 
-        setSearchItem: (state,action) => {
+        setSearchItem: (state, action) => {
             state.searchTerm = action.payload;
         }
     }
-})
+});
 
-export const {addGroup,deleteGroup,editGroupName,addMember,deleteMember,editMemberName,addExpense,deleteExpense,editExpense, setSearchItem} = groupSlice.actions
+export const {
+    addGroup,
+    deleteGroup,
+    editGroupName,
+    addMember,
+    deleteMember,
+    editMemberName,
+    addExpense,
+    deleteExpense,
+    editExpense,
+    setSearchItem
+} = groupSlice.actions;
 
-export default groupSlice.reducer
+export default groupSlice.reducer;

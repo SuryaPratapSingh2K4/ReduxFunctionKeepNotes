@@ -1,17 +1,17 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import GroupDetails from "./pages/GroupMembers";
+// import GroupDetail from "./pages/GroupDetail";
+import GroupDetail from "./pages/GroupDetails";
 
-const App = () => {
-
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/group/:groupId" element={<GroupDetails />} />
+        <Route path="/group/:id" element={<GroupDetail />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
-};
+}
 
 export default App;
