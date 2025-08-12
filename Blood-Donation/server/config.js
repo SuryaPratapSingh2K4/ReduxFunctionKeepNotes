@@ -1,0 +1,1 @@
+export const serverLocalhostPort = 7000;

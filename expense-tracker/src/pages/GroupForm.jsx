@@ -15,7 +15,8 @@ const GroupForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+        <div className="flex space-x-4 items-center">
+            <form onSubmit={handleSubmit} className="flex gap-4 mb-4">
             <input
                 type="text"
                 value={groupName}
@@ -30,6 +31,7 @@ const GroupForm = () => {
                 Add Group
             </button>
         </form>
+        </div>
     );
 };
 
