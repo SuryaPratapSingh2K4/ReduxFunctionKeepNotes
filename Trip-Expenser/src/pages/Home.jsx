@@ -1,11 +1,13 @@
-import React from 'react'
+import GroupForm from "../components/GroupForm";
+import SearchBar from "../components/SearchBar";
+import GroupList from "../components/GroupList";
 
-function Home() {
+export default function Home() {
     return (
-        <div>
-
+        <div className="space-y-4">
+            <GroupForm />
+            <SearchBar />
+            <GroupList />
         </div>
-    )
+    );
 }
-
-export default Home

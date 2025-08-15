@@ -1,13 +1,14 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
-function Navbar() {
+export default function NavBar() {
     return (
-        <nav style={{ backgroundColor: '#f8f9fa', padding: '10px' }}>
-            <Link to="/" style={{ marginRight: "10px" }}>Home</Link>
-            <Link to="/add-group">Add Group</Link>
-        </nav>
-    )
-}
+        <header className="bg-white border-b border-gray-200">
+            <div className="container-narrow py-4 flex items-center justify-center">
+                <Link to="/" className="text-2xl font-bold text-indigo-700">
+                    Trip Expenser
+                </Link>
 
-export default Navbar
+            </div>
+        </header>
+    );
+}

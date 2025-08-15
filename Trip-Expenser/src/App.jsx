@@ -1,18 +1,19 @@
-import React from 'react'
-import Navbar from './components/Navbar'
-import { Routes, Route } from 'express'
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import GroupDetails from "./pages/GroupDetails";
+import NavBar from "./components/Navbar";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/add-group" element={<AddGroup />} />
-        <Route path="/group/:id" element={<GroupDetails />} />
-      </Routes>
+    <div className="min-h-screen bg-gray-200">
+      <NavBar />
+      <main className="max-w-3xl mx-auto px-4 py-6">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/group/:groupId" element={<GroupDetails />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
     </div>
-  )
+  );
 }
-
-export default App
