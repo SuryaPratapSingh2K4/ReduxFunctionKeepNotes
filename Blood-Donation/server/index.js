@@ -1,7 +1,18 @@
 import express from 'express'
 import { serverLocalhostPort } from './config.js';
+import { connectDB } from './connectDB.js';
+
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
+connectDB();
+
+app.use(express.json());
+app.use(cors());
+app.use(express.urlencoded({extended: true}));
 
 app.get('/', (request, response) => {
     console.log(request);
