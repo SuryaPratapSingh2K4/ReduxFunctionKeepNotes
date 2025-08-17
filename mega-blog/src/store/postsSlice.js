@@ -29,7 +29,7 @@ const postSlice = createSlice({
         editPost: (state, action) => {
         const { id, title, content, image, author } = action.payload;
         const index = state.posts.findIndex((post) => post.id === id);
-        if (index) {
+        if (index !== -1) {
             state.posts[index] = {
             ...state.posts[index],
             title,
