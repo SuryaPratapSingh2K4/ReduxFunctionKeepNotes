@@ -6,14 +6,14 @@ const documentSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        location: {
+            type: String,
+            required: true
+        },
         notes: {
             type: String,
             required: true,
         },
-        location: {
-            type: String,
-            required: true
-        }
     },
     {
         timestamps: true,

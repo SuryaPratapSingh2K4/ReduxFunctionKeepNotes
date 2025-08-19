@@ -1,6 +1,7 @@
 import express from 'express'
 import { serverLocalhostPort } from './config.js';
 import { connectDB } from './connectDB.js';
+import customApiRoutes from './routes/customApiRoutes.js';
 
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -18,6 +19,9 @@ app.get('/', (request, response) => {
     console.log(request);
     return response.status(200).send('Backend Message : Welcome to the Root of your API.')
 })
+
+// CUSTOM API ROUTES
+app.use('/blood-donations',customApiRoutes);
 
 // Your normal routes here...
 
