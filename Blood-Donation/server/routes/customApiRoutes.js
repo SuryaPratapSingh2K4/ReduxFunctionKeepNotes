@@ -66,4 +66,55 @@ router.get('/:id', async (req,res) => {
     }
 })
 
+router.put('/:id', async (req,res) => {
+    try {
+        if(!req.body.month || !req.body.location || !req.body.notes){
+            return res.status(400).send({
+                message: "Something went wrong. Could not update the document inside the DB"
+            });
+        }
+
+    const {id} = req.params;
+    const result = await Donation.findByIdAndUpdate(id,req.body);
+
+    if(!result){
+        return res.status(400).json({
+            message: 'Blood Donation not found. Does it exist?'
+        })
+    }
+
+    return res.status(200).send({
+        message: 'Blood Donation updated'
+    })
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send({
+            message: error.message
+        })
+        
+    }
+})
+
+router.delete('/:id',async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result =  await Donation.findByIdAndDelete(id);
+
+        if(!result){
+            return res.status(400).json({
+                message: "Blood Donation not found. Does it exist?"
+            })
+        }
+
+        return res.status(200).send({
+            message: "Blood Donation deleted successfully"
+        })
+        
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).json(error.message)
+    }
+})
+
 export default router;
