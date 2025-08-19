@@ -3,6 +3,11 @@ import { Donation } from '../models/documentModel.js';
 
 const router = express.Router();
 
+// C - Create post method
+// R - Read all get method
+// U - Update put method
+// D - Delete delete method
+
 router.post('/',async(req,res) => {
     try {
         if(
@@ -30,6 +35,34 @@ router.post('/',async(req,res) => {
             message: error.message
         })
         
+    }
+})
+
+//Read all docs
+router.get('/', async (req, res) => {
+    try {
+        const donations = await Donation.find({});
+        return res.status(200).json({
+            count: donations.length,
+            data: donations
+        })
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send({
+            message: error.message
+        })
+        
+    }
+})
+
+router.get('/:id', async (req,res) => {
+    try {
+        const {id} = req.params;
+        const donation = await Donation.findById(id);
+        return res.status(200).json(donation);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send(error.message)
     }
 })
 
