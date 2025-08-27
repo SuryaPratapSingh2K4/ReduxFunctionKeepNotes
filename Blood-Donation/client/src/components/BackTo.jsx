@@ -8,7 +8,7 @@ function BackTo() {
             <Link to='/'
             className='bg-customRed text-white rounded-full py-2 px-4 text-lg mt-4'
             >
-                <FaArrowLeft className='inline-block mr-2' />
+                <FaArrowLeft className='inline-block mr-2 mb-1' />
                 Back
             </Link>
         </div>

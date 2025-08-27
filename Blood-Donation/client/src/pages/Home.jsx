@@ -47,15 +47,15 @@ function Home() {
                 <div className='w-full pt-[120px] md:pt-[100px] '>
                     {loading ? <Loader /> :
                         <>
-                            <div className='bg-gray-200 h-[200px] md:h-[100px] flex flex-col md:flex-row justify-center items-center px-8 md:pb-4'>
-                                <div className='w-full h-full flex justify-start items-center mt-4'>
+                            <div className='bg-gray-200 h-[200px] md:h-[100px] flex flex-col md:flex-row justify-center items-center px-8 mt-1 md:pb-4'>
+                                <div className='w-full h-full flex justify-center md:justify-start items-center'>
                                     <p className='text-2xl font-bold'>
                                         Blood Donation so far:
                                         <span className='text-3xl text-customRed'> {donations.length}</span>
                                     </p>
                                 </div>
 
-                                <div className='w-full h-full flex justify-end items-center mt-2'>
+                                <div className='w-full h-full flex justify-center items-center md:justify-end'>
                                     <Link to='/blood-donations/create'>
                                         <button className='bg-customRed text-white rounded-full py-2 px-4 font-bold flex items-center justify-center mt-2'>
                                             <span className='text-2xl mb-1'>👉</span>
