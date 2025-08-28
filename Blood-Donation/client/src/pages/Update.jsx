@@ -58,7 +58,7 @@ function Update() {
             <BackTo />
 
             <h1 className='text-2xl md:text-3xl text-center
-            my-5'>Update Blood Donation Details</h1>
+            my-5 font-bold'>Update Blood Donation Details</h1>
 
             {loading ? <Loader /> : " "}
 
@@ -81,7 +81,8 @@ function Update() {
                 </div>
                 <div className=''>
                     <label className='text-xl text-gray-500'>Notes</label>
-                    <input type="text"
+                    <textarea
+                        rows={4}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         className='border-2 border-gray-500 px-4 py-2 w-full mt-2 rounded-lg'
