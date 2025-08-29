@@ -38,7 +38,7 @@ function Create() {
     }
 
     return (
-        <div className='p-4 pt-[150px]'>
+        <div className='p-4 pt-[120px]'>
             <BackTo />
             <h1 className='text-2xl md:text-3xl text-center
             my-5 font-bold'>

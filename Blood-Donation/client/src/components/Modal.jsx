@@ -20,7 +20,8 @@ function Modal({donation, onClose}) {
                     <FaHospitalUser className='text-red-300 text-2xl'/>
                     <h2 className='my-1'>{donation.location}</h2>
                 </div>
-                <div className='mt-10'>
+                <div className='mt-4 flex flex-col'>
+                    <label className='text-gray-600 font-bold'>Notes:</label>
                     {donation.notes}
                 </div>
             </div>

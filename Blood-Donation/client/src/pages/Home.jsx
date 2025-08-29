@@ -71,17 +71,17 @@ function Home() {
                 </div>
                 :
                 <div className='w-full h-screen'>
-                    <div className='w-full h-full bg-[url("src/assets/blood-donating.jpg")] bg-no-repeat bg-cover bg-center bg-fixed flex justify-center items-center'>
+                    <div className='w-full h-full bg-[url("https://images.pexels.com/photos/12227661/pexels-photo-12227661.jpeg?cs=srgb&dl=pexels-kirill-dratsevich-237907001-12227661.jpg&fm=jpg")] bg-no-repeat bg-cover bg-center bg-fixed flex justify-center items-center'>
 
                         <div className='flex flex-col justify-center items-center p-5 z-10'>
                             <h1 className='text-2xl font-bold text-center '>
-                                You have no blood donations yet!
+                                You have no Blood Donations yet!
                             </h1>
                             <Link to='/blood-donations/create'>
                                 <button className='bg-customRed text-white rounded-full py-2 px-4
                                 font-bold flex items-center justify-center mt-2'>
-                                    <span className='text-2xl'>👉</span>
-                                    <span className='text-lg'>new blood donation</span>
+                                    <span className='text-2xl mr-1'>👉</span>
+                                    <span className='text-lg'>New Blood Donation</span>
                                 </button>
                             </Link>
                         </div>
